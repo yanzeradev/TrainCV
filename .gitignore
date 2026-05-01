@@ -1,0 +1,4 @@
+*.pt
+venv/
+runs/
+dataset_yolo_mega/
