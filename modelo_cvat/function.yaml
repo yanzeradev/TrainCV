@@ -1,0 +1,46 @@
+metadata:
+  name: senseclean-yolo
+  namespace: cvat
+  annotations:
+    name: SenseClean YOLOv11
+    type: detector
+    framework: pytorch
+    spec: |
+      [
+        { "id": 0, "name": "Homem" },
+        { "id": 1, "name": "Mulher" },
+        { "id": 2, "name": "NaoIdentificado" },
+        { "id": 3, "name": "Crianca" }
+      ]
+
+spec:
+  description: Modelo Fundacional da SenseClean
+  # Mudamos para o runtime que não força o uso de pacotes .whl locais
+  runtime: "python:3.10" 
+  handler: main:handler
+  eventTimeout: 60s
+  build:
+    image: cvat.senseclean.yolo
+    baseImage: pytorch/pytorch:2.1.0-cuda11.8-cudnn8-runtime
+    directives:
+      preCopy:
+        - kind: USER
+          value: root
+        - kind: RUN
+          # Instalamos TUDO o que é necessário antes do Nuclio tentar a parte dele
+          value: |
+            apt-get update && apt-get install -y libgl1-mesa-glx libglib2.0-0 && \
+            pip install --upgrade pip setuptools wheel && \
+            pip install numpy==1.23.5 ultralytics Pillow nuclio-sdk msgpack
+  
+  resources:
+    limits:
+      nvidia.com/gpu: 1
+
+  triggers:
+    myHttpTrigger:
+      maxWorkers: 1
+      kind: 'http'
+      workerAvailabilityTimeoutMilliseconds: 10000
+      attributes:
+        maxRequestBodySize: 33554432

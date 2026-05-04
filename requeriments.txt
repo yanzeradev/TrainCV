@@ -1,0 +1,3 @@
+/mnt/c/Users/yanka/OneDrive/Documentos/CleanCode/TrainCV/modelo_cvat
+
+./nuctl deploy --project-name cvat --path . --platform local

@@ -2,3 +2,5 @@
 venv/
 runs/
 dataset_yolo_mega/
+inputs/
+dataset_mot/
